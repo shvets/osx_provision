@@ -10,15 +10,38 @@ class GenericProvision
 
   attr_reader :interpolator, :env, :script_list, :server_info
 
-  def initialize config_file_name, scripts_file_name
+  def initialize config_file_name, scripts_file_names
     @interpolator = TextInterpolator.new
 
     @env = read_config(config_file_name)
 
-    @script_list = scripts(File.expand_path(scripts_file_name, File.dirname(__FILE__)))
+    @script_list = {}
+
+    scripts_file_names.each do |name|
+      @script_list.merge!(scripts(name))
+    end
+
+    # create_script_methods parent, self
 
     @server_info = env[:node] ? env[:node] : {}
   end
+
+  # def create_script_methods parent, current
+  #   parent_metaclass = parent.singleton_class
+  #   current_metaclass = current.singleton_class
+  #
+  #   current.script_list.keys.each do |name|
+  #     # create methods on parent, e.g. thor or rake file
+  #     parent_metaclass.send(:define_method, name.to_sym) do |*args, &block|
+  #       current.send(name, args, block)
+  #     end
+  #
+  #     # create methods on installer
+  #     current_metaclass.send(:define_method, name.to_sym) do |_, _|
+  #       current.send :run, current.server_info, name.to_s, current.env
+  #     end
+  #   end
+  # end
 
   protected
 

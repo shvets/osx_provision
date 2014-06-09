@@ -9,7 +9,7 @@ class OsxProvision < GenericProvision
     run(server_info.merge(capture_output: false, sudo: true), "prepare", env)
   end
 
-  def homebrew_install
+  def brew
     installed = package_installed("#{USER_LOCAL_BIN}/brew")
 
     if installed
@@ -19,7 +19,7 @@ class OsxProvision < GenericProvision
     end
   end
 
-  def rvm_install
+  def rvm
     installed = package_installed "#{ENV['HOME']}/.rvm/bin/rvm"
 
     if installed
@@ -29,7 +29,7 @@ class OsxProvision < GenericProvision
     end
   end
 
-  def npm_install
+  def npm
     installed = package_installed "#{USER_LOCAL_BIN}/npm"
 
     if installed
@@ -39,7 +39,7 @@ class OsxProvision < GenericProvision
     end
   end
 
-  def qt_install
+  def qt
     installed = package_installed "#{USER_LOCAL_BIN}/qmake"
 
     if installed
@@ -53,7 +53,7 @@ class OsxProvision < GenericProvision
     run(server_info, "init_launch_agent", env)
   end
 
-  def mysql_install
+  def mysql
     installed = package_installed "#{USER_LOCAL_BIN}/mysql"
 
     if installed
@@ -69,7 +69,7 @@ class OsxProvision < GenericProvision
     run(server_info, "mysql_restart", env.merge({started: started}))
   end
 
-  def postgres_install
+  def postgres
     installed = package_installed "#{USER_LOCAL_BIN}/postgres"
 
     if installed
@@ -93,7 +93,7 @@ class OsxProvision < GenericProvision
     run server_info, "postgres_start", env
   end
 
-  def ruby_install
+  def ruby
     installed = package_installed "#{ENV['HOME']}/.rvm/rubies/ruby-1.9.3-p429/bin/ruby"
 
     if installed
@@ -103,7 +103,7 @@ class OsxProvision < GenericProvision
     end
   end
 
-  def jenkins_install
+  def jenkins
     installed = package_installed "/usr/local/opt/jenkins/libexec/jenkins.war"
 
     if installed
@@ -119,7 +119,7 @@ class OsxProvision < GenericProvision
     run(server_info, "jenkins_restart", env.merge({started: started}))
   end
 
-  def selenium_install
+  def selenium
     installed = package_installed "/usr/local/opt/selenium-server-standalone/selenium-server-standalone*.jar"
 
     if installed

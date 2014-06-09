@@ -1,6 +1,6 @@
 $: << File.expand_path(File.dirname(__FILE__) + '/../lib')
 
-require 'osx_ruby_dev_install/osx_installer'
+require 'osx_provision/osx_installer'
 
 class OsxInstall < Thor
   attr_reader :installer

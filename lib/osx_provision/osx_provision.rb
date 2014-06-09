@@ -94,7 +94,7 @@ class OsxProvision < GenericProvision
   end
 
   def ruby
-    installed = package_installed "#{ENV['HOME']}/.rvm/rubies/ruby-1.9.3-p429/bin/ruby"
+    installed = package_installed "#{ENV['HOME']}/.rvm/rubies/ruby-1.9.3-p527/bin/ruby"
 
     if installed
       puts "ruby already installed."

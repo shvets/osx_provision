@@ -7,6 +7,7 @@ Add this line to your application's Gemfile:
 ```bash
 gem 'osx_provision'
 ```
+
 And then execute:
 
 ```bash

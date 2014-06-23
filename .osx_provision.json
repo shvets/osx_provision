@@ -3,20 +3,25 @@
     "domain": "127.0.0.1",
     "user": "ENV['USER']",
     "home": "ENV['HOME']",
+    "port": "",
     "remote": false
+  },
+
+  "project": {
+    "home": "#{node.home}/osx_provision/demo",
+    "ruby_version": "1.9.3",
+    "gemset": "osx_provision"
   },
 
   "postgres": {
     "hostname": "localhost", "user": "postgres", "password": "postgres",
-
-    "app_user": "ruby_dev_user",
+    "app_user": "ruby_dev", "app_password": "ruby_dev",
     "app_schemas": ["ruby_dev_test", "ruby_dev_dev", "ruby_dev_prod"]
   },
 
   "mysql": {
     "hostname": "localhost", "user": "root", "password": "root",
-
-    "app_user": "ruby_dev_user",
+    "app_user": "ruby_dev", "app_password": "ruby_dev",
     "app_schemas": ["ruby_dev_test", "ruby_dev_dev", "ruby_dev_prod"]
   }
 

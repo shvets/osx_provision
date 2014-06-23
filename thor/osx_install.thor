@@ -3,13 +3,24 @@ $: << File.expand_path(File.dirname(__FILE__) + '/../lib')
 require 'osx_provision/osx_provision'
 
 class OsxInstall < Thor
-  attr_reader :installer
-
-  def initialize *params
-    @installer = OsxProvision.new ".osx_provision.json", "osx_provision_scripts.sh"
-
-    super *params
+  def self.installer
+    @@installer ||= OsxProvision.new ".osx_provision.json"
   end
+
+  def self.create_thor_script_methods parent_class
+    installer.script_list.each do |name, value|
+      title = installer.script_title(value)
+
+      title = title.nil? ? name : title
+
+      parent_class.send :desc, name, title
+      parent_class.send(:define_method, name.to_sym) do
+        self.class.installer.send "#{name}".to_sym
+      end
+    end
+  end
+
+  create_thor_script_methods self
 
   desc "all", "Installs all required packages"
   def all
@@ -32,63 +43,31 @@ class OsxInstall < Thor
 
     invoke :ruby
 
-    invoke :postgres_create
+    invoke :postgres_create_user
+    invoke :postgres_create_schemas
+
+    invoke :mysql_create_user
+    invoke :mysql_create_schemas
   end
 
-  desc "mysql_restart", "Restarts mysql server"
-  def mysql_restart
-    installer.mysql_restart
+  desc "postgres_create_schemas", "Initializes postgres schemas"
+  def postgres_create_schemas
+    self.class.installer.postgres_create_schemas
   end
 
-  desc "postgres_restart", "Restarts postgres server"
-  def postgres_restart
-    installer.postgres_restart
+  desc "postgres_drop_schemas", "Drops postgres schemas"
+  def postgres_drop_schemas
+    self.class.installer.postgres_drop_schemas
   end
 
-  desc "postgres_stop", "Stop postgres server"
-  def postgres_stop
-    installer.postgres_stop
+  desc "mysql_create_schemas", "Initializes mysql schemas"
+  def mysql_create_schemas
+    self.class.installer.mysql_create_schemas
   end
 
-  desc "postgres_start", "Start postgres server"
-  def postgres_start
-    installer.postgres_start
-  end
-
-  desc "jenkins_restart", "Restart jenkins server"
-  def jenkins_restart
-    installer.jenkins_restart
-  end
-
-  desc "selenium_restart", "Restarts selenium server"
-  def selenium_restart
-    installer.selenium_restart
-  end
-
-  desc "postgres_create", "Initializes postgres project schemas"
-  def postgres_create
-    installer.postgres_create env["app_user"], env["app_schemas"]
-  end
-
-  desc "postgres_drop", "Drops postgres project schemas"
-  def postgres_drop
-    installer.postgres_drop env["app_user"], env["app_schemas"]
-  end
-
-  desc "postgres_test", "Test postgres schemas"
-  def postgres_test
-    installer.postgres_test env["app_user"]
-  end
-
-  desc "test", "test"
-  def test
-    puts "test"
-  end
-
-  private
-
-  def method_missing(method, *args, &block)
-    installer.send(method, *args, &block)
+  desc "mysql_drop_schemas", "Drops mysql schemas"
+  def mysql_drop_schemas
+    self.class.installer.mysql_drop_schemas
   end
 
 end

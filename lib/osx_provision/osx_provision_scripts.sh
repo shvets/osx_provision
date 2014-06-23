@@ -53,58 +53,31 @@ mkdir #{home}/Library/LaunchAgents/
 [mysql]
 
 PATH=$PATH:/usr/local/bin
-USER_HOME="#{node.home}"
+USER_HOME='#{node.home}'
+
+USER='#{mysql.user}'
+PASSWORD='#{mysql.password}'
 
 brew install mysql
 
 mkdir -p $USER_HOME/Library/LaunchAgents
 
-ln -sfv /usr/local/opt/mysql/*.plist $USER_HOME/Library/LaunchAgents
+sudo ln -sfv /usr/local/opt/mysql/*.plist $USER_HOME/Library/LaunchAgents
 
-mysqladmin -u root password 'root'
+mysqladmin -u$USER password $PASSWORD
 
 
 #######################################
 [mysql_restart]
 
-STARTED="[#{started}]"
-USER_HOME="#{node.home}"
+STARTED='[#{started}]'
+USER_HOME='#{node.home}'
 
 if [ "$STARTED" = "[true]" ] ; then
   launchctl unload $USER_HOME/Library/LaunchAgents/homebrew.mxcl.mysql.plist
 fi
 
 launchctl load $USER_HOME/Library/LaunchAgents/homebrew.mxcl.mysql.plist
-
-
-#######################################
-[create_mysql_user]
-
-PATH=$PATH:/usr/local/bin
-
-APP_USER='#{app_user}'
-HOST_NAME='#{mysql[:hostname]}'
-USER='#{mysql[:user]}'
-PASSWORD='#{mysql][:password]}'
-
-mysql -h $HOST_NAME -u root -p"root" -e "DROP USER '$APP_USER'@'$HOST_NAME';"
-mysql -h $HOST_NAME -u root -p"root" -e "CREATE USER '$APP_USER'@'$HOST_NAME' IDENTIFIED BY '$APP_USER';"
-
-mysql -h $HOST_NAME -u root -p"root" -e "grant all privileges on *.* to '$APP_USER'@'$HOST_NAME' identified by '$APP_USER' with grant option;"
-mysql -h $HOST_NAME -u root -p"root" -e "grant all privileges on *.* to '$APP_USER'@'%' identified by '$APP_USER' with grant option;"
-
-
-#######################################
-[create_mysql_schema]
-
-PATH=$PATH:/usr/local/bin
-
-SCHEMA='#{schema}'
-HOST_NAME='#{mysql[:hostname]}'
-USER='#{mysql[:user]}'
-PASSWORD='#{mysql[:password]}'
-
-mysql -h $HOST_NAME -u root -p"root" -e "create database $SCHEMA;"
 
 
 #######################################
@@ -150,24 +123,100 @@ launchctl load -w $USER_HOME/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
 
 
 #######################################
-[create_postgres_user]
+[postgres_create_user]
 
 PATH=$PATH:/usr/local/bin
 
-APP_USER='#{app_user}'
+APP_USER='#{postgres.app_user}'
 
 createuser -s -d -r $APP_USER
 
 
 #######################################
-[create_postgres_schema]
+[postgres_create_schema]
 
 PATH=$PATH:/usr/local/bin
 
-APP_USER='#{app_user}'
+APP_USER='#{postgres.app_user}'
 SCHEMA='#{schema}'
 
 createdb -U $APP_USER $SCHEMA
+
+
+#######################################
+[postgres_drop_schema]
+
+PATH=$PATH:/usr/local/bin
+
+SCHEMA='#{schema}'
+
+dropdb $SCHEMA
+
+
+#######################################
+[postgres_drop_user]
+
+PATH=$PATH:/usr/local/bin
+
+APP_USER='#{postgres.app_user}'
+
+dropuser $APP_USER
+
+
+#######################################
+[mysql_create_user]
+
+PATH=$PATH:/usr/local/bin
+
+HOST_NAME='#{mysql.hostname}'
+APP_USER='#{mysql.app_user}'
+USER='#{mysql.user}'
+PASSWORD='#{mysql.password}'
+
+mysql -h $HOST_NAME -u$USER -p$PASSWORD -e "CREATE USER '$APP_USER'@'$HOST_NAME' IDENTIFIED BY '$APP_USER';"
+mysql -h $HOST_NAME -u$USER -p$PASSWORD -e "GRANT ALL PRIVILEGES ON *.* to '$APP_USER'@'$HOST_NAME' IDENTIFIED BY '$APP_USER' WITH GRANT OPTION;"
+
+#######################################
+[mysql_drop_user]
+
+PATH=$PATH:/usr/local/bin
+
+HOST_NAME='#{mysql.hostname}'
+USER='#{mysql.user}'
+PASSWORD='#{mysql.password}'
+APP_USER='#{mysql.app_user}'
+
+mysql -h $HOST_NAME -u$USER -p$PASSWORD -e "DROP USER '$APP_USER'@'$HOST_NAME';"
+
+
+#######################################
+[mysql_create_schema]
+
+PATH=$PATH:/usr/local/bin
+
+SCHEMA='#{schema}'
+
+HOST_NAME='#{mysql.hostname}'
+USER='#{mysql.user}'
+PASSWORD='#{mysql.password}'
+APP_USER='#{mysql.app_user}'
+
+mysql -h $HOST_NAME -u$USER -p$PASSWORD -e "create database $SCHEMA;"
+
+
+#######################################
+[mysql_drop_schema]
+
+PATH=$PATH:/usr/local/bin
+
+SCHEMA='#{schema}'
+
+HOST_NAME='#{mysql.hostname}'
+USER='#{mysql.user}'
+PASSWORD='#{mysql.password}'
+APP_USER='#{mysql.app_user}'
+
+mysql -h $HOST_NAME -u$USER -p$PASSWORD -e "drop database $SCHEMA;"
 
 
 #######################################
@@ -219,7 +268,7 @@ ln -sfv /usr/local/opt/selenium-server-standalone/*.plist $USER_HOME/Library/Lau
 STARTED="[#{started}]"
 USER_HOME="#{node.home}"
 
-if [ "$STARTED" = "true" ] ; then
+if [ "$STARTED" = "[true]" ] ; then
   launchctl unload $USER_HOME/Library/LaunchAgents/homebrew.mxcl.selenium-server-standalone.plist
 fi
 
@@ -241,7 +290,7 @@ ls #{package_path}
 #######################################
 [service_started]
 
-NAME="#{name%}"
+NAME="#{name}"
 
 TEMPFILE="$(mktemp XXXXXXXX)"
 launchctl list | grep $NAME > $TEMPFILE

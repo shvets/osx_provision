@@ -3,6 +3,12 @@ require 'osx_provision/generic_provision'
 class OsxProvision < GenericProvision
   USER_LOCAL_BIN = "/usr/local/bin"
 
+  def initialize config_file_name=".osx_provision.json", scripts_file_names=[]
+    scripts_file_names.unshift(File.expand_path("osx_provision_scripts.sh", File.dirname(__FILE__))) # make it first
+
+    super
+  end
+
   def prepare
     env['password'] = ask_password("Enter password for #{env[:node][:user]}: ")
 
@@ -135,26 +141,44 @@ class OsxProvision < GenericProvision
     run(server_info, "selenium_restart", env.merge({started: started}))
   end
 
-  def postgres_create user, schemas
-    create_postgres_user user, schemas.first
+  def postgres_create_user
+    run(server_info, "postgres_create_user", env)
+  end
 
-    schemas.each do |schema|
-      create_postgres_schema user, schema
+  def postgres_create_schemas
+    env[:postgres][:app_schemas].each do |schema|
+      run(server_info, "postgres_create_schema", env.merge(schema: schema))
     end
   end
 
-  def postgres_drop user, schemas
-    schemas.each do |schema|
-      drop_postgres_schema schema
+  def postgres_drop_schemas
+    env[:postgres][:app_schemas].each do |schema|
+      run(server_info, "postgres_drop_schema", env.merge(schema: schema))
     end
-
-    drop_postgres_user user, schemas.first
   end
 
-  def postgres_test schema
-    result = get_postgres_schemas schema
+  def postgres_drop_user
+    run(server_info, "postgres_drop_user", env)
+  end
 
-    puts result
+  def mysql_create_user
+    run(server_info, "mysql_create_user", env)
+  end
+
+  def mysql_drop_user
+    run(server_info, "mysql_drop_user", env)
+  end
+
+  def mysql_create_schemas
+    env[:mysql][:app_schemas].each do |schema|
+      run(server_info, "mysql_create_schema", env.merge(schema: schema))
+    end
+  end
+
+  def mysql_drop_schemas
+    env[:mysql][:app_schemas].each do |schema|
+      run(server_info, "mysql_drop_schema", env.merge(schema: schema))
+    end
   end
 
   private
@@ -164,56 +188,6 @@ class OsxProvision < GenericProvision
                  "service_started", env.merge({name: name})
 
     result.chomp.size > 0
-  end
-
-  def create_mysql_user app_user
-    run(server_info, "create_mysql_user", env.merge({app_user: app_user}))
-  end
-
-  def create_mysql_schema schema
-    schema_exists = mysql_schema_exist?(config[:mysql][:hostname], config[:mysql][:user], config[:mysql][:password], schema)
-
-    run(server_info, "create_mysql_schema", env) unless schema_exists
-  end
-
-  def mysql_schema_exist?(hostname, user, password, schema)
-    get_mysql_schemas(hostname, user, password, schema).include?(schema)
-  end
-
-  def get_mysql_schemas hostname, user, password, schema
-    command = "#{USER_LOCAL_BIN}/mysql -h #{hostname} -u #{user} -p\"#{password}\" -e \"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA;\""
-
-    run_command server_info.merge(:suppress_output => true, :capture_output => true), command
-  end
-
-  def postgres_schema_exist?(schema)
-    get_postgres_schemas(schema).include?(schema)
-  end
-
-  def get_postgres_schemas schema
-    command = "#{USER_LOCAL_BIN}/psql -d #{schema} -c '\\l'"
-
-    run_command server_info.merge(:suppress_output => true, :capture_output => true), command
-  end
-
-  def create_postgres_user app_user, schema
-    run(server_info, "create_postgres_user", env.merge({app_user: app_user, schema: schema}))
-  end
-
-  def drop_postgres_user app_user, schema
-    command = "#{USER_LOCAL_BIN}/dropuser #{app_user}"
-
-    run_command server_info, command
-  end
-
-  def create_postgres_schema app_user, schema
-    run(server_info, "create_postgres_schema", env.merge({app_user: app_user, schema: schema}))
-  end
-
-  def drop_postgres_schema schema
-    command = "#{USER_LOCAL_BIN}/dropdb #{schema}"
-
-    run_command server_info, command
   end
 
   def package_installed package_path

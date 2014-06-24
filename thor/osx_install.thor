@@ -4,7 +4,7 @@ require 'osx_provision/osx_provision'
 
 class OsxInstall < Thor
   def self.installer
-    @@installer ||= OsxProvision.new ".osx_provision.json"
+    @@installer ||= OsxProvision.new ".osx_provision.json", [File.expand_path("project_scripts.sh", File.dirname(__FILE__))]
   end
 
   def self.create_thor_script_methods parent_class

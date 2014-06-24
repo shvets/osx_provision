@@ -28,9 +28,8 @@ class GenericProvision
 
   def create_script_methods
     script_list.keys.each do |name|
-      new_name = "#{name}_script"
-      singleton_class.send(:define_method, new_name.to_sym) do
-        self.send :run, server_info, new_name.to_s, env
+      singleton_class.send(:define_method, name.to_sym) do
+        self.send :run, server_info, name.to_s, env
       end
     end
   end

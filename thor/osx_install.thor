@@ -3,24 +3,11 @@ $: << File.expand_path(File.dirname(__FILE__) + '/../lib')
 require 'osx_provision/osx_provision'
 
 class OsxInstall < Thor
-  def self.installer
-    @@installer ||= OsxProvision.new ".osx_provision.json", [File.expand_path("project_scripts.sh", File.dirname(__FILE__))]
+  @installer = OsxProvision.new self, ".osx_provision.json", [File.expand_path("project_scripts.sh", File.dirname(__FILE__))]
+
+  class << self
+    attr_reader :installer
   end
-
-  def self.create_thor_script_methods parent_class
-    installer.script_list.each do |name, value|
-      title = installer.script_title(value)
-
-      title = title.nil? ? name : title
-
-      parent_class.send :desc, name, title
-      parent_class.send(:define_method, name.to_sym) do
-        self.class.installer.send "#{name}".to_sym
-      end
-    end
-  end
-
-  create_thor_script_methods self
 
   desc "all", "Installs all required packages"
   def all
@@ -52,22 +39,22 @@ class OsxInstall < Thor
 
   desc "postgres_create_schemas", "Initializes postgres schemas"
   def postgres_create_schemas
-    self.class.installer.postgres_create_schemas
+    OsxInstall.installer.postgres_create_schemas
   end
 
   desc "postgres_drop_schemas", "Drops postgres schemas"
   def postgres_drop_schemas
-    self.class.installer.postgres_drop_schemas
+    OsxInstall.installer.postgres_drop_schemas
   end
 
   desc "mysql_create_schemas", "Initializes mysql schemas"
   def mysql_create_schemas
-    self.class.installer.mysql_create_schemas
+    OsxInstall.installer.mysql_create_schemas
   end
 
   desc "mysql_drop_schemas", "Drops mysql schemas"
   def mysql_drop_schemas
-    self.class.installer.mysql_drop_schemas
+    OsxInstall.mysql_drop_schemas
   end
 
 end

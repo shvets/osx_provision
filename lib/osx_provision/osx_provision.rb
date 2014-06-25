@@ -3,7 +3,7 @@ require 'osx_provision/generic_provision'
 class OsxProvision < GenericProvision
   USER_LOCAL_BIN = "/usr/local/bin"
 
-  def initialize config_file_name=".osx_provision.json", scripts_file_names=[]
+  def initialize parent_class, config_file_name=".osx_provision.json", scripts_file_names=[]
     scripts_file_names.unshift(File.expand_path("osx_provision_scripts.sh", File.dirname(__FILE__))) # make it first
 
     super

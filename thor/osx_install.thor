@@ -9,32 +9,40 @@ class OsxInstall < Thor
     attr_reader :installer
   end
 
-  desc "all", "Installs all required packages"
-  def all
+  desc "general", "Installs general packages"
+  def general
+    invoke :prepare
+
     invoke :brew
-    invoke :rvm
     invoke :qt
 
-    invoke :mysql
-    invoke :mysql_restart
-
-    invoke :init_launch_agent
-
-    invoke :postgres
-    invoke :postgres_restart
-
-    invoke :jenkins
-    invoke :jenkins_restart
-
-    invoke :selenium
-
+    invoke :rvm
     invoke :ruby
 
+    invoke :mysql
+    invoke :postgres
+    invoke :jenkins
+    invoke :selenium
+
+    invoke :mysql_restart
+    invoke :postgres_restart
+    invoke :jenkins_restart
+    invoke :selenium_restart
+  end
+
+  desc "app", "Installs app"
+  def app
     invoke :postgres_create_user
     invoke :postgres_create_schemas
 
     invoke :mysql_create_user
     invoke :mysql_create_schemas
+  end
+
+  desc "all", "Installs all required packages"
+  def all
+    invoke :general
+    invoke :app
   end
 
   desc "postgres_create_schemas", "Initializes postgres schemas"

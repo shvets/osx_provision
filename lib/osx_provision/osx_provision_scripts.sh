@@ -3,7 +3,9 @@
 #######################################
 [prepare]
 
-xcodebuild -license
+#xcodebuild -license
+
+mkdir #{home}/Library/LaunchAgents/
 
 
 #######################################
@@ -41,12 +43,6 @@ brew install git
 PATH=$PATH:/usr/local/bin
 
 brew install qt
-
-
-#######################################
-[init_launch_agent]
-
-mkdir #{home}/Library/LaunchAgents/
 
 
 #######################################

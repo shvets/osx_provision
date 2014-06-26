@@ -27,3 +27,7 @@
 == Version 0.9.6
 
 * Expose script methods as thor tasks.
+
+== Version 0.9.7
+
+* Bug fix.

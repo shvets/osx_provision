@@ -49,10 +49,11 @@ brew install qt
 [mysql]
 
 PATH=$PATH:/usr/local/bin
+
 USER_HOME='#{node.home}'
 
-USER='#{mysql.user}'
-PASSWORD='#{mysql.password}'
+MYSQL_USER='#{mysql.user}'
+MYSQL_PASSWORD='#{mysql.password}'
 
 brew install mysql
 
@@ -60,8 +61,8 @@ mkdir -p $USER_HOME/Library/LaunchAgents
 
 sudo ln -sfv /usr/local/opt/mysql/*.plist $USER_HOME/Library/LaunchAgents
 
-mysqladmin -u$USER password $PASSWORD
-
+mysqladmin -u$MYSQL_USER password $MYSQL_PASSWORD
+#mysqladmin -u$MYSQL_USER -p$MYSQL_PASSWORD
 
 #######################################
 [mysql_restart]
@@ -166,11 +167,12 @@ PATH=$PATH:/usr/local/bin
 
 HOST_NAME='#{mysql.hostname}'
 APP_USER='#{mysql.app_user}'
-USER='#{mysql.user}'
-PASSWORD='#{mysql.password}'
+MYSQL_USER='#{mysql.user}'
+MYSQL_PASSWORD='#{mysql.password}'
 
-mysql -h $HOST_NAME -u$USER -p$PASSWORD -e "CREATE USER '$APP_USER'@'$HOST_NAME' IDENTIFIED BY '$APP_USER';"
-mysql -h $HOST_NAME -u$USER -p$PASSWORD -e "GRANT ALL PRIVILEGES ON *.* to '$APP_USER'@'$HOST_NAME' IDENTIFIED BY '$APP_USER' WITH GRANT OPTION;"
+mysql -h $HOST_NAME -u$MYSQL_USER -p$MYSQL_PASSWORD -e "CREATE USER '$APP_USER'@'$HOST_NAME' IDENTIFIED BY '$APP_USER';"
+mysql -h $HOST_NAME -u$MYSQL_USER -p$MYSQL_PASSWORD -e "GRANT ALL PRIVILEGES ON *.* to '$APP_USER'@'$HOST_NAME' IDENTIFIED BY '$APP_USER' WITH GRANT OPTION;"
+
 
 #######################################
 [mysql_drop_user]
@@ -193,11 +195,10 @@ PATH=$PATH:/usr/local/bin
 SCHEMA='#{schema}'
 
 HOST_NAME='#{mysql.hostname}'
-USER='#{mysql.user}'
-PASSWORD='#{mysql.password}'
-APP_USER='#{mysql.app_user}'
+MYSQL_USER='#{mysql.user}'
+MYSQL_PASSWORD='#{mysql.password}'
 
-mysql -h $HOST_NAME -u$USER -p$PASSWORD -e "create database $SCHEMA;"
+mysql -h $HOST_NAME -u$MYSQL_USER -p$MYSQL_PASSWORD -e "create database $SCHEMA;"
 
 
 #######################################
@@ -208,11 +209,10 @@ PATH=$PATH:/usr/local/bin
 SCHEMA='#{schema}'
 
 HOST_NAME='#{mysql.hostname}'
-USER='#{mysql.user}'
-PASSWORD='#{mysql.password}'
-APP_USER='#{mysql.app_user}'
+MYSQL_USER='#{mysql.user}'
+MYSQL_PASSWORD='#{mysql.password}'
 
-mysql -h $HOST_NAME -u$USER -p$PASSWORD -e "drop database $SCHEMA;"
+mysql -h $HOST_NAME -u$MYSQL_USER -p$MYSQL_PASSWORD -e "drop database $SCHEMA;"
 
 
 #######################################

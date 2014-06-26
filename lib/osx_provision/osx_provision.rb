@@ -1,6 +1,6 @@
-require 'osx_provision/generic_provision'
+require 'script_executor/base_provision'
 
-class OsxProvision < GenericProvision
+class OsxProvision < BaseProvision
   USER_LOCAL_BIN = "/usr/local/bin"
 
   def initialize parent_class, config_file_name=".osx_provision.json", scripts_file_names=[]
@@ -9,11 +9,11 @@ class OsxProvision < GenericProvision
     super
   end
 
-  def prepare
-    env['password'] = ask_password("Enter password for #{env[:node][:user]}: ")
-
-    run(server_info.merge(capture_output: false, sudo: true), "prepare", env)
-  end
+  # def prepare
+  #   env['password'] = ask_password("Enter password for #{env[:node][:user]}: ")
+  #
+  #   run(server_info.merge(capture_output: false, sudo: true), "prepare", env)
+  # end
 
   def brew
     installed = package_installed("#{USER_LOCAL_BIN}/brew")
@@ -55,10 +55,6 @@ class OsxProvision < GenericProvision
     end
   end
 
-  def init_launch_agent
-    run(server_info, "init_launch_agent", env)
-  end
-
   def mysql
     installed = package_installed "#{USER_LOCAL_BIN}/mysql"
 
@@ -89,14 +85,6 @@ class OsxProvision < GenericProvision
     started = service_started("homebrew.mxcl.postgres")
 
     run(server_info, "postgres_restart", env.merge({started: started}))
-  end
-
-  def postgres_stop
-    run server_info, "postgres_stop", env
-  end
-
-  def postgres_start
-    run server_info, "postgres_start", env
   end
 
   def ruby
@@ -141,10 +129,6 @@ class OsxProvision < GenericProvision
     run(server_info, "selenium_restart", env.merge({started: started}))
   end
 
-  def postgres_create_user
-    run(server_info, "postgres_create_user", env)
-  end
-
   def postgres_create_schemas
     env[:postgres][:app_schemas].each do |schema|
       run(server_info, "postgres_create_schema", env.merge(schema: schema))
@@ -155,18 +139,6 @@ class OsxProvision < GenericProvision
     env[:postgres][:app_schemas].each do |schema|
       run(server_info, "postgres_drop_schema", env.merge(schema: schema))
     end
-  end
-
-  def postgres_drop_user
-    run(server_info, "postgres_drop_user", env)
-  end
-
-  def mysql_create_user
-    run(server_info, "mysql_create_user", env)
-  end
-
-  def mysql_drop_user
-    run(server_info, "mysql_drop_user", env)
   end
 
   def mysql_create_schemas

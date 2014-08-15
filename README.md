@@ -1,6 +1,6 @@
 OSX Provision
 
-Library and thor tasks for provisioning of Macbook computer initial setup for Ruby/Rails development
+Library and thor tasks for provisioning of MacBook computer initial setup for Ruby/Rails development
 
 Add this line to your application's Gemfile:
 

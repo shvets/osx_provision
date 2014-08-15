@@ -1,25 +1,23 @@
 require File.expand_path('spec_helper', File.dirname(__FILE__))
 
-require 'osx_provision/osx_provision'
+require 'osx_provision'
 
-describe OsxProvision do
-  subject { OsxPrivision.new ".osx_provision.json", "osx_provision_scripts.sh"}
+RSpec.describe OsxProvision do
+  subject { OsxProvision.new self.class, ".osx_provision.json" }
 
-  describe "#init_launch_agent" do
+  describe "#prepare" do
     it "calls prepare method" do
-      subject.jenkins_install
-    end
-  end
+      expect(subject).to receive(:run)
 
-  describe "#init_launch_agent" do
-    it "calls init_launch_agent method" do
-      subject.init_launch_agent
+      subject.prepare
     end
   end
 
   describe "#homebrew_install" do
     it "calls homebrew_install method" do
-      subject.homebrew_install
+      expect(subject).to receive(:run)
+
+      subject.brew
     end
   end
 end

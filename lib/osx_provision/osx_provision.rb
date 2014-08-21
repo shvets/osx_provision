@@ -9,11 +9,9 @@ class OsxProvision < BaseProvision
     super
   end
 
-  # def prepare
-  #   env['password'] = ask_password("Enter password for #{env[:node][:user]}: ")
-  #
-  #   run(server_info.merge(capture_output: false, sudo: true), "prepare", env)
-  # end
+  def prepare
+    run(server_info, "prepare", env)
+  end
 
   def brew
     installed = package_installed("#{USER_LOCAL_BIN}/brew")

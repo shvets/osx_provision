@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
 
 
   
-  spec.add_runtime_dependency "text-interpolator", ["~> 1.0"]
+  spec.add_runtime_dependency "text-interpolator", ["~> 1.1"]
   spec.add_runtime_dependency "script_executor", ["~> 1.5"]
   spec.add_runtime_dependency "thor", ["~> 0.19"]
   spec.add_runtime_dependency "json_pure", ["~> 1.8"]

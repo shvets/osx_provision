@@ -3,8 +3,6 @@
 #######################################
 [prepare]
 
-#xcodebuild -license
-
 mkdir #{home}/Library/LaunchAgents/
 
 
@@ -35,6 +33,12 @@ source $USER_HOME/.rvm/scripts/rvm
 [git]
 
 brew install git
+
+
+#######################################
+[svn]
+
+brew install svn
 
 
 #######################################

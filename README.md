@@ -35,7 +35,7 @@ or separately:
 ```bash
 thor osx_install:brew
 thor osx_install:rvm
-thor osx_install:qtpostgres
+thor osx_install:postgres
 thor osx_install:brew
 ```
 

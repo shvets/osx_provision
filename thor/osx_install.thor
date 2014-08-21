@@ -3,7 +3,7 @@ $: << File.expand_path(File.dirname(__FILE__) + '/../lib')
 require 'osx_provision/osx_provision'
 
 class OsxInstall < Thor
-  @installer = OsxProvision.new self, ".osx_provision.json", [File.expand_path("project_scripts.sh", File.dirname(__FILE__))]
+  @installer = OsxProvision.new self, ".osx_provision.json"
 
   class << self
     attr_reader :installer

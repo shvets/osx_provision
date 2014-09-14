@@ -2,12 +2,14 @@
 
 #######################################
 [prepare]
+# Initial work
 
 mkdir #{home}/Library/LaunchAgents/
 
 
 #######################################
 [brew]
+# Installs homebrew
 
 ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
 
@@ -20,6 +22,7 @@ brew tap homebrew/versions
 
 #######################################
 [rvm]
+# Installs rvm
 
 PATH=$PATH:/usr/local/bin
 USER_HOME="#{node.home}"
@@ -30,19 +33,31 @@ source $USER_HOME/.rvm/scripts/rvm
 
 
 #######################################
+[ruby]
+# Installs ruby
+
+PATH=$PATH:/usr/local/bin
+
+rvm install 1.9.3
+
+
+#######################################
 [git]
+# Installs git
 
 brew install git
 
 
 #######################################
 [svn]
+# Installs svn
 
 brew install svn
 
 
 #######################################
 [qt]
+# Installs qt
 
 PATH=$PATH:/usr/local/bin
 
@@ -51,6 +66,7 @@ brew install qt
 
 #######################################
 [mysql]
+# Installs mysql server
 
 PATH=$PATH:/usr/local/bin
 
@@ -70,6 +86,7 @@ mysqladmin -u$MYSQL_USER password $MYSQL_PASSWORD
 
 #######################################
 [mysql_restart]
+# Restarts mysql server
 
 STARTED='[#{started}]'
 USER_HOME='#{node.home}'
@@ -83,6 +100,7 @@ launchctl load $USER_HOME/Library/LaunchAgents/homebrew.mxcl.mysql.plist
 
 #######################################
 [postgres]
+# Installs postgresql server
 
 PATH=$PATH:/usr/local/bin
 USER_HOME="#{node.home}"
@@ -93,17 +111,13 @@ ln -sfv /usr/local/opt/postgresql/homebrew.mxcl.postgresql.plist $USER_HOME/Libr
 
 initdb /usr/local/var/postgres -E utf8
 
-
-#######################################
-[postgres_stop]
-
-USER_HOME="#{node.home}"
-
-launchctl unload -w $USER_HOME/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
+mkdir /var/pgsql_socket/
+ln -s /private/tmp/.s.PGSQL.5432 /var/pgsql_socket/
 
 
 #######################################
 [postgres_start]
+# Starts postgresql server
 
 USER_HOME="#{node.home}"
 
@@ -111,7 +125,18 @@ launchctl load -w $USER_HOME/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
 
 
 #######################################
+[postgres_stop]
+# Stops postgresql server
+
+USER_HOME="#{node.home}"
+
+launchctl unload -w $USER_HOME/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
+
+
+
+#######################################
 [postgres_restart]
+# Restarts postgresql server
 
 STARTED="[#{started}]"
 USER_HOME="#{node.home}"
@@ -125,6 +150,7 @@ launchctl load -w $USER_HOME/Library/LaunchAgents/homebrew.mxcl.postgresql.plist
 
 #######################################
 [postgres_create_user]
+# Creates postgres user
 
 PATH=$PATH:/usr/local/bin
 
@@ -134,7 +160,19 @@ createuser -s -d -r $APP_USER
 
 
 #######################################
+[postgres_drop_user]
+# Drops postgres user
+
+PATH=$PATH:/usr/local/bin
+
+APP_USER='#{postgres.app_user}'
+
+dropuser $APP_USER
+
+
+#######################################
 [postgres_create_schema]
+# Creates postgres schema
 
 PATH=$PATH:/usr/local/bin
 
@@ -146,6 +184,7 @@ createdb -U $APP_USER $SCHEMA
 
 #######################################
 [postgres_drop_schema]
+# Drops postgres schema`
 
 PATH=$PATH:/usr/local/bin
 
@@ -155,17 +194,8 @@ dropdb $SCHEMA
 
 
 #######################################
-[postgres_drop_user]
-
-PATH=$PATH:/usr/local/bin
-
-APP_USER='#{postgres.app_user}'
-
-dropuser $APP_USER
-
-
-#######################################
 [mysql_create_user]
+# Creates mysql user
 
 PATH=$PATH:/usr/local/bin
 
@@ -180,6 +210,7 @@ mysql -h $HOST_NAME -u$MYSQL_USER -p$MYSQL_PASSWORD -e "GRANT ALL PRIVILEGES ON 
 
 #######################################
 [mysql_drop_user]
+# Drops mysql user
 
 PATH=$PATH:/usr/local/bin
 
@@ -193,6 +224,7 @@ mysql -h $HOST_NAME -u$USER -p$PASSWORD -e "DROP USER '$APP_USER'@'$HOST_NAME';"
 
 #######################################
 [mysql_create_schema]
+# Creates mysql schema
 
 PATH=$PATH:/usr/local/bin
 
@@ -207,6 +239,7 @@ mysql -h $HOST_NAME -u$MYSQL_USER -p$MYSQL_PASSWORD -e "create database $SCHEMA;
 
 #######################################
 [mysql_drop_schema]
+# Drops mysql schema
 
 PATH=$PATH:/usr/local/bin
 
@@ -217,14 +250,6 @@ MYSQL_USER='#{mysql.user}'
 MYSQL_PASSWORD='#{mysql.password}'
 
 mysql -h $HOST_NAME -u$MYSQL_USER -p$MYSQL_PASSWORD -e "drop database $SCHEMA;"
-
-
-#######################################
-[ruby]
-
-PATH=$PATH:/usr/local/bin
-
-rvm install 1.9.3
 
 
 #######################################
@@ -276,7 +301,8 @@ launchctl load $USER_HOME/Library/LaunchAgents/homebrew.mxcl.selenium-server-sta
 
 
 #######################################
-[npm]
+[node]
+# Installs node
 
 brew install node
 

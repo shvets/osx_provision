@@ -21,8 +21,6 @@ class OsxInstall < Thor
 
     invoke :mysql
     invoke :postgres
-    invoke :jenkins
-    invoke :selenium
 
     invoke :mysql_restart
     invoke :postgres_restart
@@ -30,8 +28,16 @@ class OsxInstall < Thor
     invoke :selenium_restart
   end
 
-  desc "app", "Installs app"
-  def app
+  desc "special", "Installs special packages"
+  def special
+    invoke :node
+    invoke :jenkins
+
+    invoke :selenium
+  end
+
+  desc "create_env", "Installs environment"
+  def create_env
     invoke :postgres_create_user
     invoke :postgres_create_schemas
 
@@ -39,10 +45,20 @@ class OsxInstall < Thor
     invoke :mysql_create_schemas
   end
 
+  desc "delete_env", "Deletes environment"
+  def delete_env
+    invoke :postgres_drop_schemas
+    invoke :postgres_drop_user
+
+    invoke :mysql_drop_schemas
+    invoke :mysql_drop_user
+  end
+
   desc "all", "Installs all required packages"
   def all
     invoke :general
-    invoke :app
+    invoke :special
+    invoke :create_env
   end
 
   desc "postgres_create_schemas", "Initializes postgres schemas"

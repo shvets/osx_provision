@@ -10,7 +10,7 @@
   "project": {
     "home": "#{node.home}/osx_provision/demo",
     "ruby_version": "1.9.3",
-    "gemset": "osx_provision"
+    "gemset": "osx_provision_demo"
   },
 
   "postgres": {

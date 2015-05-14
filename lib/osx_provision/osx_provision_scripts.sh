@@ -4,6 +4,8 @@
 [prepare]
 # Initial work
 
+#xcodebuild -license
+
 mkdir #{home}/Library/LaunchAgents/
 
 
@@ -21,6 +23,30 @@ brew tap homebrew/versions
 
 
 #######################################
+[brew_cask]
+
+PATH=$PATH:/usr/local/bin
+
+brew install caskroom/cask/brew-cask
+
+
+#######################################
+[cask_apps]
+
+PATH=$PATH:/usr/local/bin
+
+brew cask install firefox
+brew cask install google-chrome
+brew cask install flux
+brew cask install iterm2
+brew cask install jenkins-menu
+brew cask install sublime-text3
+brew cask install unrarx
+brew cask install iterm2
+brew cask install vlc
+
+
+#######################################
 [rvm]
 # Installs rvm
 
@@ -33,6 +59,24 @@ source $USER_HOME/.rvm/scripts/rvm
 
 
 #######################################
+[git]
+# Installs git
+
+PATH=$PATH:/usr/local/bin
+
+brew install git
+
+
+#######################################
+[svn]
+# Installs svn
+
+PATH=$PATH:/usr/local/bin
+
+brew install svn
+
+
+#######################################
 [ruby]
 # Installs ruby
 
@@ -42,17 +86,32 @@ rvm install 1.9.3
 
 
 #######################################
-[git]
-# Installs git
+[node]
+# Installs node
 
-brew install git
+brew install node
 
 
 #######################################
-[svn]
-# Installs svn
+[jenkins]
 
-brew install svn
+PATH=$PATH:/usr/local/bin
+USER_HOME="#{node.home}"
+
+brew install jenkins
+
+ln -sfv /usr/local/opt/jenkins/homebrew.mxcl.jenkins.plist $USER_HOME/Library/LaunchAgents
+
+
+#######################################
+[selenium]
+
+PATH=$PATH:/usr/local/bin
+USER_HOME="#{node.home}"
+
+brew install selenium-server-standalone
+
+ln -sfv /usr/local/opt/selenium-server-standalone/*.plist $USER_HOME/Library/LaunchAgents
 
 
 #######################################
@@ -253,17 +312,6 @@ mysql -h $HOST_NAME -u$MYSQL_USER -p$MYSQL_PASSWORD -e "drop database $SCHEMA;"
 
 
 #######################################
-[jenkins]
-
-PATH=$PATH:/usr/local/bin
-USER_HOME="#{node.home}"
-
-brew install jenkins
-
-ln -sfv /usr/local/opt/jenkins/homebrew.mxcl.jenkins.plist $USER_HOME/Library/LaunchAgents
-
-
-#######################################
 [jenkins_restart]
 
 STARTED="[#{started}]"
@@ -277,17 +325,6 @@ launchctl load $USER_HOME/Library/LaunchAgents/homebrew.mxcl.jenkins.plist
 
 
 #######################################
-[selenium]
-
-PATH=$PATH:/usr/local/bin
-USER_HOME="#{node.home}"
-
-brew install selenium-server-standalone
-
-ln -sfv /usr/local/opt/selenium-server-standalone/*.plist $USER_HOME/Library/LaunchAgents
-
-
-#######################################
 [selenium_restart]
 
 STARTED="[#{started}]"
@@ -298,13 +335,6 @@ if [ "$STARTED" = "[true]" ] ; then
 fi
 
 launchctl load $USER_HOME/Library/LaunchAgents/homebrew.mxcl.selenium-server-standalone.plist
-
-
-#######################################
-[node]
-# Installs node
-
-brew install node
 
 
 #######################################
